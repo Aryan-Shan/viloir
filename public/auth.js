@@ -2,7 +2,7 @@
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
-    authDomain: "viloir.firebaseapp.com",
+    authDomain: "viloir.web.app",
     projectId: "viloir",
     storageBucket: "viloir.appspot.com",
     messagingSenderId: "889475158742",
