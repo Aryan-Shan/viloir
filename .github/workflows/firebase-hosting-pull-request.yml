@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - uses:FirebaseExtended/action-hosting-deploy@v0  # Use @v0
+      - uses: FirebaseExtended/action-hosting-deploy@v0  # Corrected spacing here
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_VILOIR }}
