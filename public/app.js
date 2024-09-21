@@ -1,6 +1,6 @@
 // Firebase initialization and auth logic (Firebase v9 modular syntax)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 
 // Initialize Firebase app
@@ -13,6 +13,13 @@ function isCollegeEmail(email) {
     const domain = email.split('@')[1];
     return domain === "vitbhopal.ac.in";
 }
+
+// Redirect if user is logged in
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        window.location.href = 'landing.html';  // Redirect to landing page if logged in
+    }
+});
 
 // Sign up function
 document.getElementById('signup-btn').addEventListener('click', async () => {
@@ -42,7 +49,7 @@ document.getElementById('signup-btn').addEventListener('click', async () => {
             username: user.email.split('@')[0],
             uid: user.uid
         });
-        alert('Signup successful!');
+        window.location.href = 'landing.html';  // Redirect to landing page after signup
     } catch (error) {
         console.error('Error signing up:', error);
         alert(error.message);
@@ -68,7 +75,7 @@ document.getElementById('login-btn').addEventListener('click', async () => {
 
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        alert('Login successful!');
+        window.location.href = 'landing.html';  // Redirect to landing page after login
     } catch (error) {
         console.error('Error logging in:', error);
         alert(error.message);
