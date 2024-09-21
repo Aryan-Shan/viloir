@@ -1,18 +1,4 @@
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
-    authDomain: "viloir.web.app",
-    projectId: "viloir",
-    storageBucket: "viloir.appspot.com",
-    messagingSenderId: "889475158742",
-    appId: "1:889475158742:web:831d8fb9d081e9ca8e2f77",
-    measurementId: "G-Q4RKHG28QP"
-  };
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
 
 // Login form event listener
 document.getElementById('login-form').addEventListener('submit', (e) => {
