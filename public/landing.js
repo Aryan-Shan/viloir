@@ -23,12 +23,21 @@ const auth = getAuth(app);
 onAuthStateChanged(auth, (user) => {
     if (user) {
         const userRef = ref(database, 'users/' + user.uid);
-        set(userRef, { connected: true });
+        const connectedRef = ref(database, '.info/connected');
+        
+        // Monitor connection state
+        onValue(connectedRef, (snapshot) => {
+            if (snapshot.val() === true) {
+                // User is connected
+                set(userRef, { connected: true });
 
-        console.log('User authenticated:', user.email);//this can be removed later
-
-        // Handle disconnection
-        onDisconnect(userRef).set({ connected: false });
+                // Handle disconnection
+                onDisconnect(userRef).set({ connected: false });
+            } else {
+                // User is disconnected
+                set(userRef, { connected: false });
+            }
+        });
 
         // Display the number of online users
         displayOnlineUsers();
