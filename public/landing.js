@@ -13,6 +13,7 @@ const firebaseConfig = {
     appId: "1:889475158742:web:5d54324e3d0696048e2f77",
     measurementId: "G-FQF7WW4LZK"
 };
+firebase.database.enableLogging(true);
 
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig);
@@ -24,6 +25,8 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         const userRef = ref(database, 'users/' + user.uid);
         set(userRef, { connected: true });
+
+        console.log('User authenticated:', user.email);//this can be removed later
 
         // Handle disconnection
         onDisconnect(userRef).set({ connected: false });
