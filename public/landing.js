@@ -1,5 +1,5 @@
 // landing.js
-import { getDatabase, ref, onValue, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+import { getDatabase, ref, onValue, runTransaction, onDisconnect, set, push } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
@@ -14,18 +14,18 @@ const firebaseConfig = {
     measurementId: "G-FQF7WW4LZK"
   };
 
-// Initialize Firebase app
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth(app);
 
-// Function to update the user's connection status using transactions
+// Function to update the user's connection status
 function updateConnectionStatus(uid, status) {
-    const userRef = ref(database, 'users/' + uid);
+    const userRef = ref(database, `users/${uid}`);
 
     runTransaction(userRef, (currentData) => {
         if (currentData === null) {
-            return { connected: status };
+            return { connected: status, busy: false }; // Initial state: not busy
         } else {
             currentData.connected = status;
             return currentData;
@@ -36,16 +36,16 @@ function updateConnectionStatus(uid, status) {
 // Track the current user's connection status
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        const userRef = ref(database, 'users/' + user.uid);
+        const userRef = ref(database, `users/${user.uid}`);
         const connectedRef = ref(database, '.info/connected');
-        
+
         // Monitor connection state
         onValue(connectedRef, (snapshot) => {
             if (snapshot.val() === true) {
                 updateConnectionStatus(user.uid, true);
 
                 // Handle disconnection
-                onDisconnect(userRef).set({ connected: false });
+                onDisconnect(userRef).set({ connected: false, busy: false });
             }
         });
 
@@ -59,14 +59,14 @@ onAuthStateChanged(auth, (user) => {
 // Display the number of online users
 function displayOnlineUsers() {
     const usersRef = ref(database, 'users');
-    
+
     onValue(usersRef, (snapshot) => {
         const connectedUsers = snapshot.val();
         let count = 0;
-        
-        // Count users with 'connected: true'
+
+        // Count users who are connected and not busy
         for (const userId in connectedUsers) {
-            if (connectedUsers[userId].connected) {
+            if (connectedUsers[userId].connected && !connectedUsers[userId].busy) {
                 count++;
             }
         }
@@ -75,8 +75,6 @@ function displayOnlineUsers() {
         document.getElementById('onlineUsers').textContent = `Users online: ${count}`;
     });
 }
-
-
 
 let localStream;
 let peerConnection;
@@ -121,11 +119,18 @@ function findStranger() {
         const users = snapshot.val();
 
         if (users) {
+            let strangerFound = false;
+
             for (let userId in users) {
-                if (userId !== currentUserId) {
+                if (userId !== currentUserId && !users[userId].busy) {
                     connectToStranger(userId);
+                    strangerFound = true;
                     break;
                 }
+            }
+
+            if (!strangerFound) {
+                addCurrentUserToQueue();
             }
         } else {
             addCurrentUserToQueue();
@@ -153,11 +158,21 @@ function connectToStranger(strangerId) {
         document.getElementById('strangerVideo').srcObject = event.streams[0];
     };
 
+    // Mark both users as busy
+    markUserAsBusy(currentUserId);
+    markUserAsBusy(strangerId);
+
     // Create an offer to connect
     peerConnection.createOffer().then(offer => {
         peerConnection.setLocalDescription(offer);
         sendOffer(strangerId, offer);
     });
+}
+
+// Mark user as busy in the database
+function markUserAsBusy(userId) {
+    const userRef = ref(database, `users/${userId}`);
+    set(userRef, { busy: true, connected: true });
 }
 
 // Send offer to stranger
@@ -175,7 +190,7 @@ function sendIceCandidate(strangerId, candidate) {
 // Add current user to the waiting queue
 function addCurrentUserToQueue() {
     const userQueueRef = ref(database, `availableUsers/${currentUserId}`);
-    set(userQueueRef, { waiting: true });
+    set(userQueueRef, { waiting: true, busy: false });
 }
 
 // Handle disconnection
