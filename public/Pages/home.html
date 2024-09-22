@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
     <link rel="stylesheet" href="../Styles/home.css">
-   
+    <script type="module" src="../scripts/landing.js" defer></script>
 </head>
 <body>
     <div class="landing-container">
         <h1>Welcome!</h1>
         <p>You have successfully logged in.</p>
-        <a href="../index.html" class="btn">Logout</a>
-
+        
+        <!-- Display number of online users -->
+        <p id="onlineUsers">Users online: 0</p>
+        
+        <a href="../index.html" class="btn" id="logoutBtn">Logout</a>
     </div>
 </body>
 </html>

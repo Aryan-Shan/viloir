@@ -1,28 +1,32 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getDatabase, ref, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
-  authDomain: "viloir.firebaseapp.com",
-  projectId: "viloir",
-  storageBucket: "viloir.appspot.com",
-  messagingSenderId: "889475158742",
-  appId: "1:889475158742:web:5d54324e3d0696048e2f77",
-  measurementId: "G-FQF7WW4LZK"
-};
+    apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
+    authDomain: "viloir.firebaseapp.com",
+    projectId: "viloir",
+    storageBucket: "viloir.appspot.com",
+    messagingSenderId: "889475158742",
+    appId: "1:889475158742:web:5d54324e3d0696048e2f77",
+    measurementId: "G-FQF7WW4LZK"
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
+const database = getDatabase(app);
 
-// Handle Sign Up
+// Function to set user status in the Realtime Database
+function setUserStatus(userId, isOnline) {
+    set(ref(database, 'users/' + userId), {
+        online: isOnline,
+        lastActive: isOnline ? Date.now() : null
+    });
+}
+
+// Handle user signup
 document.getElementById('signupForm').addEventListener('submit', function (event) {
     event.preventDefault();
     const email = document.getElementById('signupEmail').value;
@@ -30,17 +34,26 @@ document.getElementById('signupForm').addEventListener('submit', function (event
 
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            // Account created successfully
+            const user = userCredential.user;
+            // Set user as online in Realtime Database
+            setUserStatus(user.uid, true);
+
+            // Handle disconnection
+            const userRef = ref(database, 'users/' + user.uid);
+            onDisconnect(userRef).set({
+                online: false,
+                lastActive: Date.now()
+            });
+
             alert('Account created successfully!');
-            window.location.href = 'Pages/home.html';  // Redirect to landing page after signup
+            window.location.href = 'Pages/home.html';
         })
         .catch((error) => {
-            // Show error message
             alert('Error: ' + error.message);
         });
 });
 
-// Handle Login
+// Handle user login
 document.getElementById('loginForm').addEventListener('submit', function (event) {
     event.preventDefault();
     const email = document.getElementById('loginEmail').value;
@@ -48,12 +61,32 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            // Login successful
+            const user = userCredential.user;
+            // Set user as online in Realtime Database
+            setUserStatus(user.uid, true);
+
+            // Handle disconnection
+            const userRef = ref(database, 'users/' + user.uid);
+            onDisconnect(userRef).set({
+                online: false,
+                lastActive: Date.now()
+            });
+
             alert('Logged in successfully!');
-            window.location.href = 'Pages/home.html';  // Redirect to landing page after login
+            window.location.href = 'Pages/home.html';
         })
         .catch((error) => {
-            // Show error message
             alert('Login Error: ' + error.message);
         });
+});
+
+// Handle user logout
+document.getElementById('logoutBtn').addEventListener('click', function () {
+    const user = auth.currentUser;
+    if (user) {
+        setUserStatus(user.uid, false); // Set user offline before logging out
+    }
+    signOut(auth).then(() => {
+        window.location.href = "../index.html"; // Redirect to login page
+    });
 });

@@ -34,6 +34,13 @@ body {
     margin-bottom: 30px;
 }
 
+/* Styling for online users count */
+.landing-container #onlineUsers {
+    font-size: 1.1rem;
+    color: #007BFF; /* Blue color for online count */
+    margin-bottom: 20px; /* Slight margin below the count */
+}
+
 /* Button Styling */
 .landing-container .btn {
     width: 100%;
