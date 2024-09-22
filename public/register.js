@@ -1,8 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getDatabase, ref, set, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+import { getDatabase, ref, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 
-// Firebase configuration
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
@@ -33,19 +32,24 @@ function updateConnectionStatus(uid, status) {
     }, { applyLocally: false });
 }
 
-// Handle user login
+// Handle user login and connection status
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Delay to prevent multiple simultaneous connections
-        setTimeout(() => {
-            updateConnectionStatus(user.uid, true);
-        }, 100); // Adding a small delay for stability
-
-        // Handle disconnection
         const userRef = ref(database, 'users/' + user.uid);
-        onDisconnect(userRef).set({ connected: false });
+
+        // Check Firebase connection state
+        const connectedRef = ref(database, '.info/connected');
+        onValue(connectedRef, (snapshot) => {
+            if (snapshot.val() === true) {
+                // Only update 'connected' status when the user is logged in
+                updateConnectionStatus(user.uid, true);
+
+                // Handle disconnection
+                onDisconnect(userRef).set({ connected: false });
+            }
+        });
     } else {
-        console.log('User logged out');
+        console.log('User is logged out');
     }
 });
 

@@ -1,5 +1,5 @@
 // landing.js
-import { getDatabase, ref, onValue, set, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+import { getDatabase, ref, onValue, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
@@ -42,15 +42,10 @@ onAuthStateChanged(auth, (user) => {
         // Monitor connection state
         onValue(connectedRef, (snapshot) => {
             if (snapshot.val() === true) {
-                // Delay to prevent multiple simultaneous connections
-                setTimeout(() => {
-                    updateConnectionStatus(user.uid, true);
-                }, 100); // Adding a small delay for stability
+                updateConnectionStatus(user.uid, true);
 
                 // Handle disconnection
                 onDisconnect(userRef).set({ connected: false });
-            } else {
-                updateConnectionStatus(user.uid, false);
             }
         });
 
