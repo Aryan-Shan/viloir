@@ -32,7 +32,7 @@ document.getElementById('signupForm').addEventListener('submit', function (event
         .then((userCredential) => {
             // Account created successfully
             alert('Account created successfully!');
-            window.location.href = 'landing.html';  // Redirect to landing page after signup
+            window.location.href = 'Pages/home.html';  // Redirect to landing page after signup
         })
         .catch((error) => {
             // Show error message
@@ -50,7 +50,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
         .then((userCredential) => {
             // Login successful
             alert('Logged in successfully!');
-            window.location.href = 'landing.html';  // Redirect to landing page after login
+            window.location.href = 'Pages/home.html';  // Redirect to landing page after login
         })
         .catch((error) => {
             // Show error message

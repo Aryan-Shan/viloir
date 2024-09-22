@@ -1,0 +1,61 @@
+/* Body Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5; /* Light grey background */
+}
+
+/* Centered landing container */
+.landing-container {
+    width: 400px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Heading Styling */
+.landing-container h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Paragraph Styling */
+.landing-container p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Button Styling */
+.landing-container .btn {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #333;
+    border-radius: 30px;
+    background-color: transparent;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover Effects */
+.landing-container .btn:hover {
+    background-color: #333;
+    color: white;
+    border-color: #333;
+}
+
+/* Hover effects for landing container */
+.landing-container:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.15);
+}
