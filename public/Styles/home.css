@@ -6,63 +6,62 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f5f5f5; /* Light grey background */
+    background-color: #f5f5f5;
+    position: relative;
 }
 
-/* Centered landing container */
-.landing-container {
-    width: 400px;
+/* User count in top-left corner */
+.user-count {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.1rem;
+    color: #007BFF;
+}
+
+/* Video chat container */
+.video-chat-container {
+    width: 70%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background-color: white;
-    padding: 40px;
-    border-radius: 30px;
+    padding: 20px;
+    border-radius: 20px;
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Heading Styling */
-.landing-container h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 20px;
+/* Video feed styling */
+.video-feed {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    gap: 20px;
 }
 
-/* Paragraph Styling */
-.landing-container p {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 30px;
-}
-
-/* Styling for online users count */
-.landing-container #onlineUsers {
-    font-size: 1.1rem;
-    color: #007BFF; /* Blue color for online count */
-    margin-bottom: 20px; /* Slight margin below the count */
+.video-feed video {
+    width: 48%;
+    height: 100%;
+    background-color: #000;
+    border-radius: 10px;
 }
 
 /* Button Styling */
-.landing-container .btn {
-    width: 100%;
+#nextChatBtn {
+    width: 50%;
     padding: 12px;
-    border: 2px solid #333;
-    border-radius: 30px;
-    background-color: transparent;
-    color: #333;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-
-/* Hover Effects */
-.landing-container .btn:hover {
+    border-radius: 10px;
     background-color: #333;
     color: white;
-    border-color: #333;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Hover effects for landing container */
-.landing-container:hover {
-    transform: translateY(-10px);
-    box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.15);
+#nextChatBtn:hover {
+    background-color: #555;
 }

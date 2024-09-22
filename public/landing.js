@@ -75,3 +75,111 @@ function displayOnlineUsers() {
         document.getElementById('onlineUsers').textContent = `Users online: ${count}`;
     });
 }
+
+
+
+let localStream;
+let peerConnection;
+let currentUserId;
+const servers = {
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+};
+
+// On user authentication
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        currentUserId = user.uid;
+
+        // Get user's video stream
+        getUserMedia();
+
+        // Handle disconnection
+        handleDisconnection();
+    } else {
+        console.log('No user is logged in.');
+    }
+});
+
+// Get the local video stream
+function getUserMedia() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+            document.getElementById('userVideo').srcObject = stream;
+            localStream = stream;
+
+            // Look for another user to chat with
+            findStranger();
+        })
+        .catch(error => console.error('Error accessing media devices.', error));
+}
+
+// Find a random stranger for video chat
+function findStranger() {
+    const availableUsersRef = ref(database, 'availableUsers');
+
+    onValue(availableUsersRef, (snapshot) => {
+        const users = snapshot.val();
+
+        if (users) {
+            for (let userId in users) {
+                if (userId !== currentUserId) {
+                    connectToStranger(userId);
+                    break;
+                }
+            }
+        } else {
+            addCurrentUserToQueue();
+        }
+    });
+}
+
+// Connect to a random stranger
+function connectToStranger(strangerId) {
+    peerConnection = new RTCPeerConnection(servers);
+
+    // Add local stream to the peer connection
+    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+    // Set up ICE candidates
+    peerConnection.onicecandidate = event => {
+        if (event.candidate) {
+            // Send candidate to the stranger
+            sendIceCandidate(strangerId, event.candidate);
+        }
+    };
+
+    // Handle receiving remote stream
+    peerConnection.ontrack = event => {
+        document.getElementById('strangerVideo').srcObject = event.streams[0];
+    };
+
+    // Create an offer to connect
+    peerConnection.createOffer().then(offer => {
+        peerConnection.setLocalDescription(offer);
+        sendOffer(strangerId, offer);
+    });
+}
+
+// Send offer to stranger
+function sendOffer(strangerId, offer) {
+    const offerRef = ref(database, `users/${strangerId}/offer`);
+    set(offerRef, { offer, from: currentUserId });
+}
+
+// Send ICE candidate to stranger
+function sendIceCandidate(strangerId, candidate) {
+    const candidateRef = ref(database, `users/${strangerId}/candidate`);
+    push(candidateRef, { candidate, from: currentUserId });
+}
+
+// Add current user to the waiting queue
+function addCurrentUserToQueue() {
+    const userQueueRef = ref(database, `availableUsers/${currentUserId}`);
+    set(userQueueRef, { waiting: true });
+}
+
+// Handle disconnection
+function handleDisconnection() {
+    const userRef = ref(database, `availableUsers/${currentUserId}`);
+    onDisconnect(userRef).remove();
+}

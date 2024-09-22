@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>Video Chat Roulette</title>
     <link rel="stylesheet" href="../Styles/home.css">
     <script type="module" src="../landing.js" defer></script>
 </head>
 <body>
-    <div class="landing-container">
-        <h1>Welcome!</h1>
-        <p>You have successfully logged in.</p>
-        
-        <!-- Display number of online users -->
+    <div class="user-count">
         <p id="onlineUsers">Users online: 0</p>
-        
-        <a href="../index.html" class="btn" id="logoutBtn">Logout</a>
     </div>
+    
+    <div class="video-chat-container">
+        <div class="video-feed">
+            <video id="userVideo" autoplay muted></video>
+            <video id="strangerVideo" autoplay></video>
+        </div>
+        <button id="nextChatBtn" class="btn">Next Chat</button>
+    </div>
+
+    <a href="../index.html" class="btn" id="logoutBtn">Logout</a>
 </body>
 </html>
