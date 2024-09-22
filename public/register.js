@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getDatabase, ref, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+import { getDatabase, ref, set, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 
+// Firebase configuration
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
@@ -18,14 +19,30 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
+// Function to update the user's connection status using transactions
+function updateConnectionStatus(uid, status) {
+    const userRef = ref(database, 'users/' + uid);
+
+    runTransaction(userRef, (currentData) => {
+        if (currentData === null) {
+            return { connected: status };
+        } else {
+            currentData.connected = status;
+            return currentData;
+        }
+    }, { applyLocally: false });
+}
+
 // Handle user login
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Set user as connected
-        const userRef = ref(database, 'users/' + user.uid);
-        set(userRef, { connected: true });
+        // Delay to prevent multiple simultaneous connections
+        setTimeout(() => {
+            updateConnectionStatus(user.uid, true);
+        }, 100); // Adding a small delay for stability
 
         // Handle disconnection
+        const userRef = ref(database, 'users/' + user.uid);
         onDisconnect(userRef).set({ connected: false });
     } else {
         console.log('User logged out');
