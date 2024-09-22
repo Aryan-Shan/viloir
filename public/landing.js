@@ -1,8 +1,9 @@
 // landing.js
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
-// Firebase configuration (copy from register.js)
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDkg90BY6ioCqh7dM3KJnfwWq_xqeGRw6A",
     authDomain: "viloir.firebaseapp.com",
@@ -16,6 +17,23 @@ const firebaseConfig = {
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const auth = getAuth(app);
+
+// Track the current user's connection status
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const userRef = ref(database, 'users/' + user.uid);
+        set(userRef, { connected: true });
+
+        // Handle disconnection
+        onDisconnect(userRef).set({ connected: false });
+
+        // Display the number of online users
+        displayOnlineUsers();
+    } else {
+        console.log('No user is logged in.');
+    }
+});
 
 // Display the number of online users
 function displayOnlineUsers() {
@@ -36,6 +54,3 @@ function displayOnlineUsers() {
         document.getElementById('onlineUsers').textContent = `Users online: ${count}`;
     });
 }
-
-// Call the function to display online users
-displayOnlineUsers();
