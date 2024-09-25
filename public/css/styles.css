@@ -1,0 +1,96 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+/* Outlined box styling */
+.form-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    border: 2px solid #000; /* Black border for outline */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    max-width: 400px;
+    margin: 20px;
+}
+
+h1 {
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+/* Input fields styling */
+input {
+    border-radius: 25px;
+    padding: 12px;
+    width: 85%;
+    margin: 10px 0;
+    border: 2px solid #000; /* Black outline */
+    background-color: #f0f0f0;
+    font-size: 16px;
+}
+
+/* Button styling */
+button {
+    border-radius: 25px;
+    padding: 12px;
+    width: 90%;
+    margin: 10px 0;
+    border: 2px solid #000; /* Black outline */
+    background-color: #fff;
+    color: #000;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for buttons */
+button:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+/* Controls for buttons */
+.controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.controls button {
+    width: 45%;
+}
+
+.status {
+    margin-top: 20px;
+}
+
+/* Text styling */
+p {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 5px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #444;
+}

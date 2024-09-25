@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getDatabase, ref, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+import { getDatabase, ref, runTransaction, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -62,7 +62,7 @@ document.getElementById('signupForm').addEventListener('submit', function (event
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
             alert('Account created successfully!');
-            window.location.href = 'Pages/home.html';
+            window.location.href = 'home.html'; // Redirecting to home.html after successful signup
         })
         .catch((error) => {
             alert('Error: ' + error.message);
@@ -78,7 +78,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
             alert('Logged in successfully!');
-            window.location.href = 'Pages/home.html';
+            window.location.href = 'home.html'; // Redirecting to home.html after successful login
         })
         .catch((error) => {
             alert('Login Error: ' + error.message);
@@ -89,6 +89,6 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 document.getElementById('logoutBtn').addEventListener('click', function () {
     signOut(auth).then(() => {
         console.log('User logged out');
-        window.location.href = "../index.html"; // Redirect to login page
+        window.location.href = "index.html"; // Redirect to login page
     });
 });
