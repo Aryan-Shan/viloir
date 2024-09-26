@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viloir Login / Sign Up</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="container">
@@ -34,18 +31,21 @@
             <p>Already have an account? <a href="#" id="showLoginForm">Login</a></p>
         </div>
     </div>
-    <script src="js/app.js"></script>
-    <script src="js/auth.js"></script>
+
+    <!-- Add type="module" for the JS files -->
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    
     <script>
         // Switching between Login and Signup forms
         document.getElementById('showSignupForm').addEventListener('click', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // Prevent default link behavior
             document.getElementById('login-box').style.display = 'none';
             document.getElementById('signup-box').style.display = 'block';
         });
 
         document.getElementById('showLoginForm').addEventListener('click', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // Prevent default link behavior
             document.getElementById('signup-box').style.display = 'none';
             document.getElementById('login-box').style.display = 'block';
         });

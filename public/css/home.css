@@ -1,0 +1,81 @@
+body {
+    background-color: #ffffff;
+    color: #000000;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid #000000;
+    border-radius: 15px;
+    margin: 20px;
+}
+
+.video-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 900px; /* Increased width */
+    margin-bottom: 20px;
+}
+
+video {
+    width: 48%; /* Slightly increased width for videos */
+    border: 2px solid #000000;
+    border-radius: 15px;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 8px 12px; /* Adjusted padding for smaller buttons */
+    border: 2px solid #000000; /* Black border */
+    border-radius: 25px;
+    background-color: #000000; /* Initial black background */
+    color: #ffffff; /* White text */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100px; /* Fixed width for buttons */
+}
+
+/* Specific button styles */
+#holdButton {
+    border: 2px solid pink; /* Pink outlined */
+}
+
+#holdButton:hover {
+    background-color: pink; /* Fill color on hover */
+    color: #000000; /* Text color on hover */
+}
+
+#nextButton {
+    border: 2px solid yellow; /* Yellow outlined */
+}
+
+#nextButton:hover {
+    background-color: yellow; /* Fill color on hover */
+    color: #000000; /* Text color on hover */
+}
+
+#logoutBtn {
+    border: 2px solid red; /* Red outlined */
+}
+
+#logoutBtn:hover {
+    background-color: red; /* Fill color on hover */
+    color: #ffffff; /* Text color on hover */
+}
+
+/* Button hover effect */
+button:hover {
+    transform: scale(1.05); /* Slight scale effect on hover */
+}
