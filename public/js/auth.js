@@ -31,12 +31,14 @@ function updateConnectionStatus(uid, status) {
     runTransaction(userRef, (currentData) => {
         if (currentData === null) {
             return { connected: status };
-        } else {
+        } else if (currentData.connected !== status) { // Only update if the status has changed
             currentData.connected = status;
             return currentData;
         }
+        return; // Return undefined to indicate no change
     });
 }
+
 
 // Function to get the number of online users
 function getOnlineUsersCount() {
@@ -56,16 +58,14 @@ function getOnlineUsersCount() {
 // Handle user login and connection status
 onAuthStateChanged(auth, (user) => {
     if (user) {
+        // Set up the user reference
         const userRef = ref(database, 'users/' + user.uid);
 
-        // Check Firebase connection state
+        // Monitor the connection state
         const connectedRef = ref(database, '.info/connected');
         onValue(connectedRef, (snapshot) => {
             if (snapshot.val() === true) {
-                // Update 'connected' status only after the user logs in
                 updateConnectionStatus(user.uid, true);
-
-                // Handle disconnection
                 onDisconnect(userRef).set({ connected: false });
             }
         });
@@ -76,6 +76,7 @@ onAuthStateChanged(auth, (user) => {
         console.log('User is logged out');
     }
 });
+
 
 // Handle Signup
 document.getElementById('signupForm')?.addEventListener('submit', function (event) {
