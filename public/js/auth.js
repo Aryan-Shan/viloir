@@ -1,5 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+    sendEmailVerification // Import sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 import { getDatabase, ref, runTransaction, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
 
 // Firebase configuration
@@ -84,9 +91,12 @@ document.getElementById('signupForm')?.addEventListener('submit', function (even
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
-            user.sendEmailVerification(); // Send email verification
-            alert(`Account created successfully for ${user.email}! Please verify your email before logging in.`);
-            window.location.href = 'index.html'; // Redirecting to login page after signup
+            // Send email verification
+            sendEmailVerification(user)
+                .then(() => {
+                    alert(`Account created successfully for ${user.email}! Please verify your email before logging in.`);
+                    window.location.href = 'index.html'; // Redirecting to login page after signup
+                });
         })
         .catch((error) => {
             const errorCode = error.code;
@@ -105,6 +115,7 @@ document.getElementById('loginForm')?.addEventListener('submit', function (event
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
+            // Check if email is verified
             if (user.emailVerified) {
                 alert(`Logged in successfully as ${user.email}!`);
                 window.location.href = 'home.html'; // Redirecting to home.html after successful login
