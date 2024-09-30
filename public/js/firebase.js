@@ -1,7 +1,7 @@
 // Import Firebase modules
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
-import { getDatabase, ref, set, onDisconnect, onValue } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
+import { getDatabase, ref, set, onDisconnect, onValue ,remove,update,push} from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -19,4 +19,4 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-export { auth, database, ref, set, onDisconnect, onValue };
+export { auth, database, ref, set, onDisconnect, onValue ,remove,update,push};
