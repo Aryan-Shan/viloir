@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viloir - Video Chat</title>
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Random Video Chat</h1>
+        <div id="onlineCountContainer">
+            <p>Online Users: <span id="onlineCount">0</span></p>
+        </div>
+        <div id="videoContainer">
+            <!-- Local Video -->
+            <video id="localVideo" autoplay playsinline></video>
+
+            <!-- Remote Video -->
+            <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+        <div class="controls">
+            <button id="holdBtn">Hold</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        <button id="logoutBtn">Logout</button>
+    </div>
+    <script type="module" src="js/chat.js"></script>
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/video.js"></script>
+</body>
+</html>

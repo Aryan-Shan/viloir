@@ -1,101 +1,42 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-
+/* Styles for the container and forms */
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #121212; /* Dark background */
-    color: #e0e0e0; /* Light text color */
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    background-color: #f0f0f0;
 }
 
 .container {
-    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Outlined box styling */
 .form-box {
-    background: #1e1e1e; /* Darker background for the form box */
-    padding: 30px;
-    border-radius: 15px;
-    border: 2px solid #444; /* Subtle dark border */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Slightly more pronounced shadow */
-    max-width: 400px;
-    margin: 20px;
-}
-
-h1 {
-    font-weight: 500;
-    margin-bottom: 20px;
-    color: #e0e0e0; /* Light text for headings */
-}
-
-/* Input fields styling */
-input {
-    border-radius: 25px;
-    padding: 12px;
-    width: 85%;
-    margin: 10px 0;
-    border: 2px solid #555; /* Dark border for inputs */
-    background-color: #2a2a2a; /* Dark background for inputs */
-    color: #e0e0e0; /* Light text color in inputs */
-    font-size: 16px;
-}
-
-/* Button styling */
-button {
-    border-radius: 25px;
-    padding: 12px;
-    width: 90%;
-    margin: 10px 0;
-    border: 2px solid #555; /* Darker outline for buttons */
-    background-color: #2a2a2a; /* Dark background */
-    color: #e0e0e0; /* Light text */
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Hover effect for buttons */
-button:hover {
-    background-color: #444; /* Darker hover effect */
-    color: #fff;
-}
-
-/* Controls for buttons */
-.controls {
-    margin-top: 20px;
     display: flex;
-    justify-content: space-evenly;
+    flex-direction: column;
 }
 
-.controls button {
-    width: 45%;
+input {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.status {
-    margin-top: 20px;
-    color: #e0e0e0; /* Light text */
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
-/* Text styling */
-p {
-    font-size: 16px;
-    font-weight: 400;
-    margin: 5px 0;
-    color: #b0b0b0; /* Slightly lighter text for paragraphs */
-}
-
-a {
-    text-decoration: none;
-    color: #e0e0e0; /* Light link color */
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-a:hover {
-    color: #bbb; /* Light hover effect for links */
+button:hover {
+    background-color: #0056b3;
 }
