@@ -5,6 +5,9 @@ import {
     sendEmailVerification 
 } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
 
+// Regular expression to match the college email format
+const collegeEmailPattern = /^[a-z]+\.[0-9]{2}[A-Za-z]{3}[0-9]{5}@vitbhopal\.ac\.in$/;
+
 // Handle Signup
 document.getElementById('signupForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -12,8 +15,9 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
 
-    if (!email.endsWith('@vitbhopal.ac.in')) {
-        alert('Please use your college email (example.23BAI10383@vitbhopal.ac.in)');
+    // Check if the email matches the required pattern
+    if (!collegeEmailPattern.test(email)) {
+        alert('Please use a valid college email in the format: firstname.23BAI12345@vitbhopal.ac.in');
         return;
     }
 
