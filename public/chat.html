@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viloir - Video Chat</title>
     <link rel="stylesheet" href="css/chat.css">
+     <!-- Firebase App (the core Firebase SDK) -->
+     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+     <!-- Firebase Firestore -->
+     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+     <!-- Firebase Realtime Database -->
+     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
+ </head>
 </head>
 <body>
     <div class="container">
@@ -24,6 +31,7 @@
             <button id="nextBtn">Next</button>
         </div>
         <button id="logoutBtn">Logout</button>
+        <div id="Connected_user"></div>
     </div>
     <script type="module" src="js/chat.js"></script>
     <script type="module" src="js/firebase.js"></script>
