@@ -38,6 +38,7 @@ async function initializePeer() {
     // Handle errors
     peer.on('error', (err) => {
         console.error("Peer error:", err);
+        connectToRandomUser(); // Automatically connect to the next user on error
     });
 
     console.log("Peer initialized:", peer);
@@ -60,7 +61,16 @@ function answerCall(call) {
         console.log("Call ended.");
         hideLoadingGif(); // Hide loading gif if call ends abruptly
         remoteVideo.srcObject = null; // Clear remote video on call end
+        connectToRandomUser(); // Automatically connect to the next random user
     });
+
+    call.on('error', () => {
+        console.log("Call error occurred.");
+        remoteVideo.srcObject = null; // Clear remote video on error
+        connectToRandomUser(); // Automatically connect to the next random user
+    });
+
+    currentCall = call; // Store the current call
 }
 
 // Connect to a random user
@@ -81,6 +91,7 @@ async function connectToRandomUser() {
         } else {
             console.log("No online users available.");
             connectedUserElement.textContent = "No online users available.";
+            setTimeout(connectToRandomUser, 5000); // Retry connecting after 5 seconds if no users are available
         }
     });
 }
@@ -112,6 +123,13 @@ function initiateCallWithUser(randomUserId) {
         console.log("Call ended.");
         hideLoadingGif(); // Hide loading gif if call ends abruptly
         remoteVideo.srcObject = null; // Clear remote video on call end
+        connectToRandomUser(); // Automatically connect to the next random user
+    });
+
+    call.on('error', () => {
+        console.log("Call error occurred.");
+        remoteVideo.srcObject = null; // Clear remote video on error
+        connectToRandomUser(); // Automatically connect to the next random user
     });
 
     currentCall = call; // Store the current call
