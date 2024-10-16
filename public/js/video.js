@@ -31,12 +31,11 @@ async function initializePeerJS() {
 
         // Handle errors
         peer.on('error', (err) => {
-            console.error("PeerJS error: ", err);
             connectToNewRandomUser();
         });
 
     } catch (error) {
-        console.error("Failed to initialize PeerJS or get local media: ", error);
+        // Handle error if necessary
     }
 }
 
@@ -47,16 +46,13 @@ function initializeInCallField() {
         ...currentUser,
         status: 'online',
         inCall: false   // Initialize the inCall field as false
-    }).then(() => {
-        console.log('inCall field initialized to false');
     }).catch((err) => {
-        console.error("Error initializing inCall field: ", err);
+        // Handle error if necessary
     });
 }
 
 // Handle incoming call
 function handleIncomingCall(call) {
-    console.log("Incoming call from Peer ID: ", call.peer);
     displayLoading();
 
     // Fetch and display caller's email
@@ -72,13 +68,11 @@ function handleIncomingCall(call) {
 
         // Handle remote stream
         call.on('stream', (remoteStream) => {
-            console.log("Receiving remote stream...");
             hideLoading();
             remoteVideo.srcObject = remoteStream;
         });
 
         call.on('close', () => {
-            console.log("Call ended.");
             resetRemoteVideo();
             updateUserCallStatus(currentUser.uid, false);  // Set inCall to false after call ends
             updateUserCallStatus(call.peer, false);
@@ -86,7 +80,6 @@ function handleIncomingCall(call) {
         });
 
         call.on('error', (err) => {
-            console.error("Call error: ", err);
             resetRemoteVideo();
             updateUserCallStatus(currentUser.uid, false);
             updateUserCallStatus(call.peer, false);
@@ -112,18 +105,16 @@ function connectToNewRandomUser() {
             const randomUserId = onlineUsers[Math.floor(Math.random() * onlineUsers.length)];
             initiateOutgoingCall(randomUserId);
         } else {
-            console.log("No available online users.");
             setTimeout(connectToNewRandomUser, 5000);  // Retry after 5 seconds
         }
     }).catch((err) => {
-        console.error("Error fetching users: ", err);
+        // Handle error if necessary
     });
 }
 
 // Initiate an outgoing call to the selected user
 function initiateOutgoingCall(targetUserId) {
     if (!peer) {
-        console.error("PeerJS not initialized.");
         return;
     }
 
@@ -139,13 +130,11 @@ function initiateOutgoingCall(targetUserId) {
 
         const call = peer.call(targetUserId, localStream);
         call.on('stream', (remoteStream) => {
-            console.log("Connected and receiving remote stream.");
             hideLoading();
             remoteVideo.srcObject = remoteStream;
         });
 
         call.on('close', () => {
-            console.log("Call with " + targetUserId + " ended.");
             resetRemoteVideo();
             updateUserCallStatus(currentUser.uid, false);
             updateUserCallStatus(targetUserId, false);
@@ -153,7 +142,6 @@ function initiateOutgoingCall(targetUserId) {
         });
 
         call.on('error', (err) => {
-            console.error("Error during call: ", err);
             resetRemoteVideo();
             updateUserCallStatus(currentUser.uid, false);
             updateUserCallStatus(targetUserId, false);
@@ -167,10 +155,8 @@ function initiateOutgoingCall(targetUserId) {
 // Update the user's inCall status in Firebase
 function updateUserCallStatus(userId, inCall) {
     const userStatusRef = ref(database, `users/${userId}/inCall`);
-    set(userStatusRef, inCall).then(() => {
-        console.log(`User ${userId} inCall status updated to ${inCall}`);
-    }).catch((err) => {
-        console.error("Failed to update inCall status: ", err);
+    set(userStatusRef, inCall).catch((err) => {
+        // Handle error if necessary
     });
 }
 
@@ -182,7 +168,7 @@ function getUserEmail(userId, callback) {
         if (email) {
             callback(email);
         } else {
-            console.error(`Could not fetch email for user ${userId}`);
+            // Handle error if necessary
         }
     });
 }
