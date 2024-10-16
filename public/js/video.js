@@ -1,157 +1,185 @@
-import { database, ref, set, onValue, onChildAdded, push } from './firebase.js'; // Ensure this line is present
+import { database, ref, get, set, onValue } from './firebase.js';
 
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
-const connectedUserElement = document.getElementById('Connected_user'); // Element to show connected user's email
-const loadingGif = '../assets/loading.gif'; // Path to your loading gif
-const user = JSON.parse(sessionStorage.getItem('user'));
+const connectedUserDisplay = document.getElementById('Connected_user');
+const loadingGifPath = '../assets/loading.gif';  // Path to your loading gif
 
-let localStream;
-let peer; // PeerJS peer object
-let currentCall; // Current PeerJS call
+let localStream = null;
+let peer = null;
+let currentCall = null;
+let currentUser = JSON.parse(sessionStorage.getItem('user')); // Store current user info
 
-// Start the call when the page loads
+// Initialize the app when the page loads
 window.onload = async () => {
-    console.log("Page loaded, initializing PeerJS...");
-    await initializePeer();
+    await initializePeerJS();
+    initializeInCallField();  // Set inCall to false at page load
 };
 
-// Initialize PeerJS
-async function initializePeer() {
-    // Get local media stream
-    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    localVideo.srcObject = localStream;
+// Initialize PeerJS and set up local video stream
+async function initializePeerJS() {
+    try {
+        // Get local video/audio stream
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localVideo.srcObject = localStream;
 
-    // Create a new Peer instance
-    peer = new Peer(user.uid); // Use user ID as Peer ID
+        // Initialize PeerJS with user ID
+        peer = new Peer(currentUser.uid);
 
-    // Handle incoming calls
-    peer.on('call', (call) => {
-        console.log("Incoming call from:", call.peer);
-        // Fetch email of the caller from Firebase and display it
-        getUserEmail(call.peer, (email) => {
-            connectedUserElement.textContent = `Connected with: ${email}`;
+        // Handle incoming calls
+        peer.on('call', handleIncomingCall);
+
+        // Handle errors
+        peer.on('error', (err) => {
+            console.error("PeerJS error: ", err);
+            connectToNewRandomUser();
         });
-        answerCall(call);
-    });
 
-    // Handle errors
-    peer.on('error', (err) => {
-        console.error("Peer error:", err);
-        connectToRandomUser(); // Automatically connect to the next user on error
-    });
-
-    console.log("Peer initialized:", peer);
+    } catch (error) {
+        console.error("Failed to initialize PeerJS or get local media: ", error);
+    }
 }
 
-// Answer an incoming call
-function answerCall(call) {
-    console.log("Answering call...");
-    displayLoadingGif(); // Show loading gif when answering call
-    call.answer(localStream); // Answer the call with the local stream
-
-    // Set up remote stream
-    call.on('stream', (remoteStream) => {
-        console.log("Received remote stream.");
-        hideLoadingGif(); // Hide loading gif once stream is received
-        remoteVideo.srcObject = remoteStream; // Set remote video stream
+// Initialize the 'inCall' field for the user to track whether they are in a call
+function initializeInCallField() {
+    const userStatusRef = ref(database, `users/${currentUser.uid}`);
+    set(userStatusRef, {
+        ...currentUser,
+        status: 'online',
+        inCall: false   // Initialize the inCall field as false
+    }).then(() => {
+        console.log('inCall field initialized to false');
+    }).catch((err) => {
+        console.error("Error initializing inCall field: ", err);
     });
-
-    call.on('close', () => {
-        console.log("Call ended.");
-        hideLoadingGif(); // Hide loading gif if call ends abruptly
-        remoteVideo.srcObject = null; // Clear remote video on call end
-        connectToRandomUser(); // Automatically connect to the next random user
-    });
-
-    call.on('error', () => {
-        console.log("Call error occurred.");
-        remoteVideo.srcObject = null; // Clear remote video on error
-        connectToRandomUser(); // Automatically connect to the next random user
-    });
-
-    currentCall = call; // Store the current call
 }
 
-// Connect to a random user
-async function connectToRandomUser() {
-    console.log("Connecting to a random online user...");
-    displayLoadingGif(); // Show loading gif while connecting to a random user
+// Handle incoming call
+function handleIncomingCall(call) {
+    console.log("Incoming call from Peer ID: ", call.peer);
+    displayLoading();
+
+    // Fetch and display caller's email
+    getUserEmail(call.peer, (callerEmail) => {
+        connectedUserDisplay.textContent = `Connected with: ${callerEmail}`;
+
+        // Set both users to "inCall"
+        updateUserCallStatus(currentUser.uid, true);
+        updateUserCallStatus(call.peer, true);
+
+        // Answer the call with local stream
+        call.answer(localStream);
+
+        // Handle remote stream
+        call.on('stream', (remoteStream) => {
+            console.log("Receiving remote stream...");
+            hideLoading();
+            remoteVideo.srcObject = remoteStream;
+        });
+
+        call.on('close', () => {
+            console.log("Call ended.");
+            resetRemoteVideo();
+            updateUserCallStatus(currentUser.uid, false);  // Set inCall to false after call ends
+            updateUserCallStatus(call.peer, false);
+            connectToNewRandomUser();
+        });
+
+        call.on('error', (err) => {
+            console.error("Call error: ", err);
+            resetRemoteVideo();
+            updateUserCallStatus(currentUser.uid, false);
+            updateUserCallStatus(call.peer, false);
+            connectToNewRandomUser();
+        });
+
+        currentCall = call;
+    });
+}
+
+// Connect to a random available user (who is not in a call)
+function connectToNewRandomUser() {
+    displayLoading();
+
     const usersRef = ref(database, 'users');
-    onValue(usersRef, snapshot => {
+    get(usersRef).then(snapshot => {
         const users = snapshot.val();
-        const onlineUsers = Object.keys(users).filter(userId => users[userId].status === 'online' && userId !== user.uid);
+        const onlineUsers = Object.keys(users).filter(uid => 
+            uid !== currentUser.uid && users[uid].status === 'online' && users[uid].inCall === false
+        );
 
         if (onlineUsers.length > 0) {
             const randomUserId = onlineUsers[Math.floor(Math.random() * onlineUsers.length)];
-            const randomUserEmail = users[randomUserId].email; // Get the email of the random user
-            console.log(`Random user selected: ${randomUserId} (${randomUserEmail})`);
-            connectedUserElement.textContent = `Connected with: ${randomUserEmail}`; // Display connected user's email
-            initiateCallWithUser(randomUserId);
+            initiateOutgoingCall(randomUserId);
         } else {
-            console.log("No online users available.");
-            connectedUserElement.textContent = "No online users available.";
-            setTimeout(connectToRandomUser, 5000); // Retry connecting after 5 seconds if no users are available
+            console.log("No available online users.");
+            setTimeout(connectToNewRandomUser, 5000);  // Retry after 5 seconds
         }
+    }).catch((err) => {
+        console.error("Error fetching users: ", err);
     });
 }
 
-// Initiate call with the selected random user
-function initiateCallWithUser(randomUserId) {
-    console.log("Initiating call with user:", randomUserId);
-
-    // Ensure that the peer object is defined before calling
+// Initiate an outgoing call to the selected user
+function initiateOutgoingCall(targetUserId) {
     if (!peer) {
-        console.error("Peer instance not initialized. Cannot initiate call.");
+        console.error("PeerJS not initialized.");
         return;
     }
 
-    // Fetch email of the random user from Firebase and display it for the caller
-    getUserEmail(randomUserId, (email) => {
-        connectedUserElement.textContent = `Connected with: ${email}`;
+    displayLoading();
+
+    // Fetch and display the email of the user being called
+    getUserEmail(targetUserId, (targetUserEmail) => {
+        connectedUserDisplay.textContent = `Connecting with: ${targetUserEmail}`;
+
+        // Set both users to "inCall"
+        updateUserCallStatus(currentUser.uid, true);
+        updateUserCallStatus(targetUserId, true);
+
+        const call = peer.call(targetUserId, localStream);
+        call.on('stream', (remoteStream) => {
+            console.log("Connected and receiving remote stream.");
+            hideLoading();
+            remoteVideo.srcObject = remoteStream;
+        });
+
+        call.on('close', () => {
+            console.log("Call with " + targetUserId + " ended.");
+            resetRemoteVideo();
+            updateUserCallStatus(currentUser.uid, false);
+            updateUserCallStatus(targetUserId, false);
+            connectToNewRandomUser();
+        });
+
+        call.on('error', (err) => {
+            console.error("Error during call: ", err);
+            resetRemoteVideo();
+            updateUserCallStatus(currentUser.uid, false);
+            updateUserCallStatus(targetUserId, false);
+            connectToNewRandomUser();
+        });
+
+        currentCall = call;
     });
-
-    const call = peer.call(randomUserId, localStream); // Initiate a call to the random user
-
-    call.on('stream', (remoteStream) => {
-        console.log("Received remote stream.");
-        hideLoadingGif(); // Hide loading gif once stream is received
-        remoteVideo.srcObject = remoteStream; // Set remote video stream
-    });
-
-    call.on('close', () => {
-        console.log("Call ended.");
-        hideLoadingGif(); // Hide loading gif if call ends abruptly
-        remoteVideo.srcObject = null; // Clear remote video on call end
-        connectToRandomUser(); // Automatically connect to the next random user
-    });
-
-    call.on('error', () => {
-        console.log("Call error occurred.");
-        remoteVideo.srcObject = null; // Clear remote video on error
-        connectToRandomUser(); // Automatically connect to the next random user
-    });
-
-    currentCall = call; // Store the current call
 }
 
-// Show a loading gif while waiting for the remote stream
-function displayLoadingGif() {
-    remoteVideo.src = loadingGif; // Show loading gif in place of remote video
+// Update the user's inCall status in Firebase
+function updateUserCallStatus(userId, inCall) {
+    const userStatusRef = ref(database, `users/${userId}/inCall`);
+    set(userStatusRef, inCall).then(() => {
+        console.log(`User ${userId} inCall status updated to ${inCall}`);
+    }).catch((err) => {
+        console.error("Failed to update inCall status: ", err);
+    });
 }
 
-// Hide the loading gif once the stream is ready
-function hideLoadingGif() {
-    remoteVideo.src = ''; // Clear the loading gif
-}
-
-// Function to fetch user email from Firebase
+// Fetch user email from Firebase by their ID
 function getUserEmail(userId, callback) {
     const userRef = ref(database, `users/${userId}/email`);
     onValue(userRef, (snapshot) => {
         const email = snapshot.val();
         if (email) {
-            console.log(`Fetched email for user ${userId}: ${email}`);
             callback(email);
         } else {
             console.error(`Could not fetch email for user ${userId}`);
@@ -159,11 +187,26 @@ function getUserEmail(userId, callback) {
     });
 }
 
-// 'Next' button functionality
-document.getElementById('nextBtn').addEventListener('click', async () => {
-    console.log("Next button clicked, disconnecting current call and connecting to a new user...");
+// Reset remote video when a call ends
+function resetRemoteVideo() {
+    remoteVideo.srcObject = null;
+    connectedUserDisplay.textContent = "Disconnected.";
+}
+
+// Display loading gif while waiting for remote stream
+function displayLoading() {
+    remoteVideo.src = loadingGifPath;
+}
+
+// Hide the loading gif once the stream is ready
+function hideLoading() {
+    remoteVideo.src = '';  // Clear the loading gif
+}
+
+// "Next" button functionality to end the current call and connect to a new random user
+document.getElementById('nextBtn').addEventListener('click', () => {
     if (currentCall) {
-        currentCall.close(); // Close the current call
+        currentCall.close();  // End the current call
     }
-    await connectToRandomUser(); // Connect to a new random user
+    connectToNewRandomUser();  // Connect to a new random user
 });

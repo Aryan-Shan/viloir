@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,20 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viloir - Video Chat</title>
     <link rel="stylesheet" href="css/chat.css">
-     <!-- Firebase App (the core Firebase SDK) -->
-     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
-     <!-- Firebase Firestore -->
-     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
-     <!-- Firebase Realtime Database -->
-     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
+    
+    <!-- PeerJS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 
-
-     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js" integrity="sha512-iFU+yF1keEaLDC9HEwPfLMSRaS0unBHE14GEgx6pQKJXjp5v0tvX8xpfp2lgJ62XEjbYp/M5C3CAmej/PWXMyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-
- </head>
 </head>
 <body>
     <div class="container">
@@ -40,7 +31,17 @@
         <button id="logoutBtn">Logout</button>
         <div id="Connected_user"></div>
     </div>
-    <script type="module" src="js/chat.js"></script>
+    
+    <!-- Firebase and App Initialization -->
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+        import { getDatabase } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js';
+    </script>
+
+    <!-- Include your custom scripts here, but no need for type="module" -->
+    <script  type="module" src="js/chat.js"></script>
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/video.js"></script>
 </body>
