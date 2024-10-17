@@ -31,6 +31,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    position: relative;
 }
 
 video {
@@ -110,4 +111,31 @@ button:disabled {
     font-weight: bold;
     margin-left: 5px;
     color: #00ffab;
+}
+
+/* Loading GIF overlay */
+#loadingOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;  /* Ensure it appears above the videos */
+    display: none; /* Hidden by default */
+}
+
+#loadingGif {
+    width: 80px;
+    height: 80px;
+}
+
+/* Style the connected user area */
+#Connected_user {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    color: #00ffab;
+    font-size: 1.2rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
