@@ -1,4 +1,4 @@
-import { database, ref, set, onDisconnect, onValue } from './firebase.js';
+import { database, ref, set, onDisconnect, onValue, remove } from './firebase.js';
 
 // Get the logged-in user from sessionStorage
 const user = JSON.parse(sessionStorage.getItem('user'));
@@ -13,12 +13,8 @@ if (user && user.uid) {
         lastActive: Date.now()
     });
 
-    // Handle when the user disconnects or closes the chat page
-    onDisconnect(userStatusRef).set({
-        email: user.email,
-        status: 'offline',
-        lastActive: Date.now()
-    });
+    // Remove user from database when they disconnect or close the chat page
+    onDisconnect(userStatusRef).remove();
 
     // Function to count online users
     const countOnlineUsers = () => {
@@ -42,30 +38,23 @@ if (user && user.uid) {
     // Logout button functionality
     const logoutBtn = document.getElementById('logoutBtn');
     logoutBtn.addEventListener('click', () => {
-        // Set user as offline in the database
-        set(userStatusRef, {
-            email: user.email,
-            status: 'offline',
-            lastActive: Date.now()
-        }).then(() => {
+        // Remove user data from the database on logout
+        remove(userStatusRef).then(() => {
             // Clear the user from session storage
             sessionStorage.removeItem('user');
             // Redirect to login page
             window.location.href = 'index.html';
         }).catch((error) => {
-            console.error("Error updating status:", error);
+            console.error("Error removing user data:", error);
             // Optionally handle error (e.g., alert user)
         });
     });
 
     // Handle leaving the chat page (user becomes offline)
     window.addEventListener('beforeunload', function () {
-        set(userStatusRef, {
-            email: user.email,
-            status: 'offline',
-            lastActive: Date.now()
-        }).catch((error) => {
-            console.error("Error updating status on unload:", error);
+        // Remove user data from Firebase
+        remove(userStatusRef).catch((error) => {
+            console.error("Error removing user data on unload:", error);
         });
     });
 } else {
