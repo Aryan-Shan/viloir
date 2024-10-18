@@ -202,7 +202,7 @@ function getUserEmail(userId, callback) {
 // Reset remote video when a call ends
 function resetRemoteVideo() {
     remoteVideo.srcObject = null;
-    connectedUserDisplay.textContent = "Disconnected.";
+    connectedUserDisplay.textContent = "Disconnected from previous call.";
 }
 
 // Display loading overlay while waiting for remote stream
