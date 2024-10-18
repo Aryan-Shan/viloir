@@ -23,12 +23,27 @@ window.onload = async () => {
 async function initializePeerJS() {
     try {
         console.log('Initializing PeerJS...');
+
+        // Get local video/audio stream
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         localVideo.srcObject = localStream;
         console.log('Local stream set.');
 
-        peer = new Peer(currentUser.uid);
-        console.log('PeerJS initialized with ID:', currentUser.uid);
+        // Initialize PeerJS with TURN server integration
+        peer = new Peer(currentUser.uid, {
+            config: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' }, // Google STUN server
+                    {   // TURN server (free from openrelay.metered.ca)
+                        urls: 'turn:openrelay.metered.ca:80',
+                        username: 'openrelayproject',
+                        credential: 'openrelayproject'
+                    }
+                ]
+            }
+        });
+
+        console.log('PeerJS initialized with TURN and STUN servers.');
 
         peer.on('call', handleIncomingCall);
         peer.on('error', (err) => {
