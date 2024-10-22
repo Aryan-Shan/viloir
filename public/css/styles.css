@@ -1,30 +1,31 @@
 /* Comic-style font */
 body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family:monospace;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #ffeaa7; /* Vibrant background */
+    background-color: #e97373; /* Vibrant background */
 }
 
 .container {
-    background-color: #fdcb6e; /* Bright container color */
+    background-color: #c4a6a6; /* Bright container color */
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 h1 {
-    color: #d63031; /* Comic-style heading */
+    color: #000000; /* Comic-style heading */
 }
 
 input {
     margin: 10px 0;
     padding: 15px;
-    border: 2px solid #dfe6e9;
-    border-radius: 8px;
+    border: 2px solid #000000;
+    border-radius: 30px;
     width: 100%;
     box-sizing: border-box;
     font-size: 16px;
@@ -32,10 +33,10 @@ input {
 
 button {
     padding: 15px;
-    background-color: #00cec9;
+    background-color: #00ce00;
     color: white;
     border: 2px solid #00cec9;
-    border-radius: 12px;
+    border-radius: 30px;
     cursor: pointer;
     font-size: 16px;
 }
@@ -50,6 +51,12 @@ p a {
     text-decoration: underline;
 }
 
+#showSignupForm:hover{
+    color: #00ffb7;
+}
+#showLoginForm:hover{
+    color: #00ffb7;
+}
 
 /* Styling for the checkbox container */
 /* Styling for the checkbox container */
@@ -79,3 +86,4 @@ p a {
 .checkbox-container a:hover {
     color: #ff4500; /* Color change on hover */
 }
+
