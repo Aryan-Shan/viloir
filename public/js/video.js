@@ -29,7 +29,7 @@ async function initializePeerJS() {
         localVideo.srcObject = localStream;
         console.log('Local stream set.');
 
-        // Initialize PeerJS with TURN server integration
+        // Initialize PeerJS with TURN server integration and iceTransportPolicy
         peer = new Peer(currentUser.uid, {
             config: {
                 iceServers: [
@@ -39,7 +39,8 @@ async function initializePeerJS() {
                         username: 'openrelayproject',
                         credential: 'openrelayproject'
                     }
-                ]
+                ],
+                iceTransportPolicy: 'all'  // Allow both local (host) and remote candidates (srflx/relay)
             }
         });
 
@@ -255,14 +256,16 @@ function resetRemoteVideo() {
 // Display loading overlay while waiting for remote stream
 function displayLoading() {
     console.log('Displaying loading overlay...');
-    document.getElementById('loadingOverlay').style.display = 'block';  // Show the loading overlay
+    document.getElementById('loadingOverlay').style.display = 'block';  // Show loading overlay
 }
 
-// Hide the loading overlay once the stream is ready
+// Hide loading overlay when remote stream starts
 function hideLoading() {
     console.log('Hiding loading overlay...');
-    document.getElementById('loadingOverlay').style.display = 'none';  // Hide the loading overlay
+    document.getElementById('loadingOverlay').style.display = 'none';  // Hide loading overlay
 }
+
+
 
 // "Next" button functionality to end the current call and connect to a new random user
 document.getElementById('nextBtn').addEventListener('click', () => {
