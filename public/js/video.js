@@ -249,7 +249,7 @@ function getUserEmail(userId, callback) {
 function resetRemoteVideo() {
     console.log('Resetting remote video...');
     remoteVideo.srcObject = null;
-    connectedUserDisplay.textContent = "Disconnected.";
+    connectedUserDisplay.textContent = "Disconnected From Previous Call.";
 }
 
 // Display loading overlay while waiting for remote stream
