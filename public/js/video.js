@@ -33,14 +33,31 @@ async function initializePeerJS() {
         peer = new Peer(currentUser.uid, {
             config: {
                 iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' }, // Google STUN server
-                    {   // TURN server (free from openrelay.metered.ca)
-                        urls: 'turn:openrelay.metered.ca:80',
-                        username: 'openrelayproject',
-                        credential: 'openrelayproject'
-                    }
+                    {
+                      urls: "stun:stun.relay.metered.ca:80",
+                    },
+                    {
+                      urls: "turn:in.relay.metered.ca:80",
+                      username: "07edd38c69b0e4894fe43033",
+                      credential: "4yS2yxq899RUEv48",
+                    },
+                    {
+                      urls: "turn:in.relay.metered.ca:80?transport=tcp",
+                      username: "07edd38c69b0e4894fe43033",
+                      credential: "4yS2yxq899RUEv48",
+                    },
+                    {
+                      urls: "turn:in.relay.metered.ca:443",
+                      username: "07edd38c69b0e4894fe43033",
+                      credential: "4yS2yxq899RUEv48",
+                    },
+                    {
+                      urls: "turns:in.relay.metered.ca:443?transport=tcp",
+                      username: "07edd38c69b0e4894fe43033",
+                      credential: "4yS2yxq899RUEv48",
+                    },
                 ],
-                iceTransportPolicy: 'all'  // Allow both local (host) and remote candidates (srflx/relay)
+                iceTransportPolicy: 'relay'  // Force all traffic through TURN server
             }
         });
 
