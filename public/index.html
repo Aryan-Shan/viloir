@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viloir - Login / Sign Up</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/Index_responsive.css">
 </head>
 <body>
     <div class="container">
@@ -26,6 +27,16 @@
                 <input type="text" id="signupUsername" placeholder="Username" required>
                 <input type="email" id="signupEmail" placeholder="Email (example.23BAI10383@vitbhopal.ac.in)" required>
                 <input type="password" id="signupPassword" placeholder="Password" required>
+                
+                <!-- Terms and Conditions Checkbox -->
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="agreeTnC" required>
+                        I Agree to the <a href="TnC.html" target="_blank">Terms and Conditions</a>
+                    </label>
+                </div>
+                
+                
                 <button type="submit">Sign Up</button>
             </form>
             <p>Already have an account? <a href="#" id="showLoginForm">Login</a></p>
@@ -47,6 +58,14 @@
             e.preventDefault();
             document.getElementById('signup-box').style.display = 'none';
             document.getElementById('login-box').style.display = 'block';
+        });
+
+        // Prevent form submission if the checkbox is not checked
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            if (!document.getElementById('agreeTnC').checked) {
+                alert("You must agree to the terms and conditions.");
+                event.preventDefault();
+            }
         });
     </script>
 </body>
